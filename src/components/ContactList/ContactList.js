@@ -1,39 +1,54 @@
 import style from './ContactList.module.css';
-
+import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
 import { actionRemoveContact } from '../../redux/reduxActions';
+import { deletePostContacts } from '../../data/api-contacts';
 
 const ContactList = () => {
-  const { items, filter } = useSelector(state => state);
+  // Добавь селекторы в файл contacts-selectors.js in my case it dose not have sens))) state => state
+  const { items, filter, isLoading } = useSelector(state => state);
   const dispatch = useDispatch();
-  const onRemove = valueInput => dispatch(actionRemoveContact(valueInput));
+  const onRemove = async idContact => {
+    await deletePostContacts(idContact);
+    dispatch(actionRemoveContact(idContact));
+  };
 
   const getVisibleContacts = (items, filterInput) => {
     return items.filter(contact =>
       contact.name.toLowerCase().includes(filterInput.toLowerCase()),
     );
   };
+  const handleIsLoading = () => {
+    if (isLoading === true) {
+      toast('load is going');
+    }
+    if (isLoading === false) {
+      toast('request rejected');
+    }
+    if (items.length === 0) return null;
+  };
 
-  if (items.length === 0) return null;
-
+  handleIsLoading();
   return (
-    <ul>
-      {getVisibleContacts(items, filter).map(({ id, name, phone }) => {
-        return (
-          <li key={id}>
-            {name} : {phone}
-            <button
-              onClick={() => {
-                onRemove(id);
-              }}
-              className={style.button__delete}
-            >
-              Delete
-            </button>
-          </li>
-        );
-      })}
-    </ul>
+    <>
+      <ul>
+        {getVisibleContacts(items, filter).map(({ id, name, phone }) => {
+          return (
+            <li key={id}>
+              {name} : {phone}
+              <button
+                onClick={() => {
+                  onRemove(id);
+                }}
+                className={style.button__delete}
+              >
+                Delete
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </>
   );
 };
 

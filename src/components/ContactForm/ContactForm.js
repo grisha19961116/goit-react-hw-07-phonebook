@@ -1,14 +1,26 @@
 import style from './ContactForm.module.css';
 import { toast } from 'react-toastify';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
+import { asyncOperationGetContacts } from '../../redux/contactsOperation';
 import { actionAddContact } from '../../redux/reduxActions';
+import { postContacts } from '../../data/api-contacts';
+import { getContactMemo } from '../../redux/contact-selectors';
 
 function ContactForm() {
-  const { items } = useSelector(state => state);
+  // Добавь селекторы в файл contacts-selectors.js in my case it dose not have sens))) state => state
+  // add memo just for fill all tasks   сделай мемоизацию селекторов там, где необходимо.
+  const { items } = useSelector(getContactMemo);
   const dispatch = useDispatch();
-  const onAdd = newContact => dispatch(actionAddContact(newContact));
+  const onAdd = async newContact => {
+    await postContacts(newContact);
+    dispatch(actionAddContact(newContact));
+  };
+
+  useEffect(() => {
+    dispatch(asyncOperationGetContacts());
+  }, [dispatch]);
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
