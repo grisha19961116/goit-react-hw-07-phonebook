@@ -8,8 +8,8 @@ const actionRemoveContact = createAction('items/remove', id => ({
 const actionSetFilter = createAction('filter/addFilter', filter => ({
   payload: filter,
 }));
-const actionContactRequest = createAction('items/request', value => ({
-  payload: value,
+const actionContactRequestStatus = createAction('items/request', flag => ({
+  payload: flag,
 }));
 const actionGetContactsSuccess = createAction('items/success', contacts => ({
   payload: contacts,
@@ -22,7 +22,7 @@ export {
   actionAddContact,
   actionRemoveContact,
   actionSetFilter,
-  actionContactRequest,
+  actionContactRequestStatus,
   actionGetContactsSuccess,
   actionContactError,
 };

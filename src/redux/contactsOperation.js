@@ -1,5 +1,5 @@
 import {
-  actionContactRequest,
+  actionContactRequestStatus,
   actionGetContactsSuccess,
   actionContactError,
 } from './reduxActions';
@@ -9,12 +9,14 @@ axios.defaults.baseURL = 'http://localhost:3000';
 
 const asyncOperationGetContacts = () => async dispatch => {
   try {
-    dispatch(actionContactRequest(true));
+    dispatch(actionContactRequestStatus('request'));
     const data = await asyncGetContacts();
     dispatch(actionGetContactsSuccess(data));
   } catch (error) {
     dispatch(actionContactError([]));
-    dispatch(actionContactRequest(false));
+    dispatch(actionContactRequestStatus('error'));
+  } finally {
+    dispatch(actionContactRequestStatus('success'));
   }
 };
 

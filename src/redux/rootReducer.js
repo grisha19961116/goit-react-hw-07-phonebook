@@ -5,7 +5,7 @@ import {
   actionSetFilter,
   actionGetContactsSuccess,
   actionContactError,
-  actionContactRequest,
+  actionContactRequestStatus,
 } from './reduxActions';
 
 const reducerContacts = createReducer([], {
@@ -29,9 +29,9 @@ const reducerFilter = createReducer('', {
   [actionSetFilter]: (_, { payload }) => payload,
 });
 const reducerLoading = createReducer('', {
-  [actionContactRequest]: (_, { payload }) => payload,
-  [actionContactError]: (_, { payload }) => payload,
+  [actionContactRequestStatus]: (_, { payload }) => payload,
 });
+
 export const rootReducer = combineReducers({
   items: reducerContacts,
   filter: reducerFilter,

@@ -18,19 +18,13 @@ const ContactList = () => {
       contact.name.toLowerCase().includes(filterInput.toLowerCase()),
     );
   };
-  const handleIsLoading = () => {
-    if (isLoading === true) {
-      toast('load is going');
-    }
-    if (isLoading === false) {
-      toast('request rejected');
-    }
-    if (items.length === 0) return null;
-  };
 
-  handleIsLoading();
+  if (items.length === 0) return null;
+  console.log(isLoading);
+
   return (
     <>
+      <h2>{isLoading}</h2>
       <ul>
         {getVisibleContacts(items, filter).map(({ id, name, phone }) => {
           return (
