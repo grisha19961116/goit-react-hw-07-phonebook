@@ -4,8 +4,8 @@ import {
   actionRemoveContact,
   actionSetFilter,
   actionGetContactsSuccess,
-  actionContactError,
-  actionContactRequestStatus,
+  actionGetContactError,
+  actionContactLoading,
 } from './reduxActions';
 
 const reducerContacts = createReducer([], {
@@ -17,10 +17,10 @@ const reducerContacts = createReducer([], {
     const itemsRemove = [...state.filter(contact => contact.id !== payload)];
     return itemsRemove;
   },
-  [actionGetContactsSuccess]: (state, { payload }) => {
+  [actionGetContactsSuccess]: (_state, { payload }) => {
     return payload;
   },
-  [actionContactError]: (state, { payload }) => {
+  [actionGetContactError]: (_state, { payload }) => {
     return payload;
   },
 });
@@ -28,12 +28,12 @@ const reducerContacts = createReducer([], {
 const reducerFilter = createReducer('', {
   [actionSetFilter]: (_, { payload }) => payload,
 });
-const reducerLoading = createReducer('', {
-  [actionContactRequestStatus]: (_, { payload }) => payload,
+const reducerLoading = createReducer(false, {
+  [actionContactLoading]: (_, { payload }) => payload,
 });
 
 export const rootReducer = combineReducers({
-  items: reducerContacts,
+  contacts: reducerContacts,
   filter: reducerFilter,
   isLoading: reducerLoading,
 });

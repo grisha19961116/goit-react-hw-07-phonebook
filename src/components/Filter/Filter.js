@@ -1,13 +1,12 @@
 import style from './Filter.module.css';
 import { useSelector, useDispatch } from 'react-redux';
+import { getState } from '../../redux/contact-selectors';
 import { actionSetFilter } from '../../redux/reduxActions';
 
 const Filter = () => {
-  // Добавь селекторы в файл contacts-selectors.js in my case it dose not have sens))) state => state
-  const { filter } = useSelector(state => state);
+  const { filter } = useSelector(getState);
   const dispatch = useDispatch();
-  const handleFilterChange = valueInput =>
-    dispatch(actionSetFilter(valueInput));
+  const handleFilterChange = value => dispatch(actionSetFilter(value));
   return (
     <input
       className={style.input__filter}

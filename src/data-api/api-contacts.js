@@ -5,11 +5,7 @@ const asyncGetContacts = async () => {
   return data;
 };
 
-const postContacts = async postContact => {
-  await axios.post(`/contacts`, postContact);
-};
-const deletePostContacts = async idContact => {
-  await axios.delete(`/contacts/${idContact}`);
-};
+const postContacts = async contact => await axios.post(`/contacts`, contact);
+const deletePostContacts = async id => await axios.delete(`/contacts/${id}`);
 
 export { asyncGetContacts, postContacts, deletePostContacts };

@@ -3,24 +3,20 @@ import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-import { asyncOperationGetContacts } from '../../redux/contactsOperation';
+import { asyncOperationGetContacts } from '../../redux/contactsAsyncOperation';
 import { actionAddContact } from '../../redux/reduxActions';
-import { postContacts } from '../../data/api-contacts';
+import { postContacts } from '../../data-api/api-contacts';
 import { getContactMemo } from '../../redux/contact-selectors';
 
 function ContactForm() {
-  // Добавь селекторы в файл contacts-selectors.js in my case it dose not have sens))) state => state
-  // add memo just for fill all tasks   сделай мемоизацию селекторов там, где необходимо.
-  const { items } = useSelector(getContactMemo);
+  const { contacts } = useSelector(getContactMemo);
   const dispatch = useDispatch();
-  const onAdd = async newContact => {
-    await postContacts(newContact);
-    dispatch(actionAddContact(newContact));
+  const onAdd = async contact => {
+    await postContacts(contact);
+    dispatch(actionAddContact(contact));
   };
 
-  useEffect(() => {
-    dispatch(asyncOperationGetContacts());
-  }, [dispatch]);
+  useEffect(() => dispatch(asyncOperationGetContacts()), [dispatch]);
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -39,22 +35,99 @@ function ContactForm() {
         console.log('Sorry, we are not have ' + name + '.');
     }
   };
-  const handleCheckUniqueContact = (arrayItems, nameContact) => {
-    const isExistContact = !!arrayItems.find(
-      contact => contact.name === nameContact,
-    );
-    isExistContact && alert('Contact is already exist');
-
-    return !isExistContact;
+  const handleCheckUniqueContact = () => {
+    const isExistName = contacts.some(contact => contact.name === name);
+    const isExistPhone = contacts.some(contact => contact.phone === phone);
+    isExistName &&
+      toast.warn('⚠️ You have contact with same name!', {
+        position: 'top-right',
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    isExistPhone &&
+      toast.error('🚀 Number has been using!', {
+        position: 'top-right',
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    return !isExistPhone;
   };
 
   const validateFrom = () => {
-    if (!name || !phone) {
-      toast('Some filed is empty');
+    if (!name && !phone) {
+      toast.warn('⚠️ Fields are empty!', {
+        position: 'top-right',
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       return false;
     }
 
-    return handleCheckUniqueContact(items, name);
+    if (!name && phone) {
+      toast.warn('⚠️ Field name empty!', {
+        position: 'top-right',
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return false;
+    }
+
+    if (!phone && name) {
+      toast.warn('⚠️ Field phone empty!', {
+        position: 'top-right',
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return false;
+    }
+
+    if (phone.length !== 10) {
+      toast.warn('⚠️ Number has to have 10 symbols!', {
+        position: 'top-right',
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return false;
+    }
+
+    if (name.length > 12) {
+      toast.warn('⚠️ Name has to be no longer 12 characters!', {
+        position: 'top-right',
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return false;
+    }
+
+    return handleCheckUniqueContact();
   };
 
   const resetForm = () => {
@@ -64,18 +137,16 @@ function ContactForm() {
 
   const handleFromSubmit = e => {
     e.preventDefault();
-    const isValidForm = validateFrom();
-
-    if (!isValidForm) return;
-
-    const newContact = { id: uuidv4(), name, phone };
+    const isExistPhone = validateFrom();
+    if (!isExistPhone) return;
     resetForm();
-    return onAdd(newContact);
+    onAdd({ id: uuidv4(), name, phone });
   };
 
   return (
-    <form onSubmit={handleFromSubmit}>
+    <form className={style.contactForm} onSubmit={handleFromSubmit}>
       <input
+        className={style.contactForm__input}
         type="text"
         name="name"
         placeholder="Enter name"
@@ -83,13 +154,16 @@ function ContactForm() {
         onChange={handleChangeForm}
       ></input>
       <input
+        className={style.contactForm__input}
         type="tel"
         name="phone"
         placeholder="Enter phone number"
         value={phone}
         onChange={handleChangeForm}
       ></input>
-      <button type="submit">Add Contact</button>
+      <button className={style.buttonSubmit} type="submit">
+        Add Contact
+      </button>
     </form>
   );
 }

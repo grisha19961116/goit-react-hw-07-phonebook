@@ -3,5 +3,9 @@ import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { rootReducer } from './rootReducer';
 
-export const store = createStore(rootReducer, applyMiddleware(thunk));
-// composeWithDevTools()
+const composeEnhancers = composeWithDevTools({});
+
+export const store = createStore(
+  rootReducer,
+  composeEnhancers(applyMiddleware(thunk)),
+);

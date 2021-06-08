@@ -1,49 +1,45 @@
-import style from './ContactList.module.css';
-import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
+import { getState } from '../../redux/contact-selectors';
 import { actionRemoveContact } from '../../redux/reduxActions';
-import { deletePostContacts } from '../../data/api-contacts';
+import { deletePostContacts } from '../../data-api/api-contacts';
+import style from './ContactList.module.css';
 
 const ContactList = () => {
-  // Добавь селекторы в файл contacts-selectors.js in my case it dose not have sens))) state => state
-  const { items, filter, isLoading } = useSelector(state => state);
+  const { contacts, filter } = useSelector(getState);
   const dispatch = useDispatch();
-  const onRemove = async idContact => {
-    await deletePostContacts(idContact);
-    dispatch(actionRemoveContact(idContact));
+  const onRemove = async id => {
+    await deletePostContacts(id);
+    dispatch(actionRemoveContact(id));
   };
 
-  const getVisibleContacts = (items, filterInput) => {
-    return items.filter(contact =>
-      contact.name.toLowerCase().includes(filterInput.toLowerCase()),
+  const getVisibleContacts = () => {
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filter.toLowerCase()),
     );
   };
 
-  if (items.length === 0) return null;
-  console.log(isLoading);
-
-  return (
+  return contacts.length !== 0 ? (
     <>
-      <h2>{isLoading}</h2>
-      <ul>
-        {getVisibleContacts(items, filter).map(({ id, name, phone }) => {
+      <ul className={style.contactUl}>
+        {getVisibleContacts().map(({ id, name, phone }) => {
           return (
-            <li key={id}>
-              {name} : {phone}
-              <button
+            <li className={style.contactLi} key={id}>
+              <p className={style.name}>{name}</p>
+              <p className={style.phone}>{phone}</p>
+              <p
                 onClick={() => {
                   onRemove(id);
                 }}
-                className={style.button__delete}
+                className={style.p__delete}
               >
                 Delete
-              </button>
+              </p>
             </li>
           );
         })}
       </ul>
     </>
-  );
+  ) : null;
 };
 
 export default ContactList;
