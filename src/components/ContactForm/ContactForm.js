@@ -9,7 +9,7 @@ import { postContacts } from '../../data-api/api-contacts';
 import { getContactMemo } from '../../redux/contact-selectors';
 
 function ContactForm() {
-  const { contacts } = useSelector(getContactMemo);
+  const contacts = useSelector(getContactMemo);
   const dispatch = useDispatch();
   const onAdd = async contact => {
     await postContacts(contact);
